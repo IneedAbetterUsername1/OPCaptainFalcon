@@ -720,6 +720,36 @@ unsafe extern "C" fn game_throwlw(agent: &mut L2CAgentBase) {
     }
 }
 
+//final smash
+
+unsafe extern "C" fn game_finalend(agent: &mut L2CAgentBase) {
+    if macros::is_excute(agent) {
+        macros::ATTACK_ABS(agent, *FIGHTER_ATTACK_ABSOLUTE_KIND_CAPTAIN_FINAL, 0, 100.0, 361, 135, 0, 100, 0.0, 1.0, *ATTACK_LR_CHECK_POS, 0.0, true, Hash40::new("collision_attr_death"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_NONE, *ATTACK_REGION_NONE);
+        WorkModule::on_flag(agent.module_accessor, *FIGHTER_CAPTAIN_STATUS_WORK_ID_FLAG_FINAL_ABS_SET);
+    }
+    frame(agent.lua_state_agent, 1.0);
+    macros::FT_MOTION_RATE(agent, 0.7);
+    frame(agent.lua_state_agent, 30.0);
+    if macros::is_excute(agent) {
+        WorkModule::on_flag(agent.module_accessor, *FIGHTER_CAPTAIN_STATUS_WORK_ID_FLAG_FINAL_END_EXIT);
+    }
+    frame(agent.lua_state_agent, 40.0);
+    macros::FT_MOTION_RATE(agent, 0.9);
+    frame(agent.lua_state_agent, 75.0);
+    macros::FT_MOTION_RATE(agent, 0.8);
+}
+
+unsafe extern "C" fn game_finalairend(agent: &mut L2CAgentBase) {
+    if macros::is_excute(agent) {
+        macros::ATTACK_ABS(agent, *FIGHTER_ATTACK_ABSOLUTE_KIND_CAPTAIN_FINAL, 0, 100.0, 270, 135, 0, 100, 0.0, 1.0, *ATTACK_LR_CHECK_POS, 0.0, true, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_NONE, *ATTACK_REGION_NONE);
+        WorkModule::on_flag(agent.module_accessor, *FIGHTER_CAPTAIN_STATUS_WORK_ID_FLAG_FINAL_ABS_SET);
+    }
+    frame(agent.lua_state_agent, 30.0);
+    if macros::is_excute(agent) {
+        WorkModule::on_flag(agent.module_accessor, *FIGHTER_CAPTAIN_STATUS_WORK_ID_FLAG_FINAL_END_EXIT);
+    }
+}
+
 pub fn install() {
     Agent::new("captain")
         .on_line(Main, captain_frame)
@@ -753,5 +783,7 @@ pub fn install() {
         .game_acmd("game_throwf", game_throwf, Default)
         .game_acmd("game_throwhi", game_throwhi, Default)
         .game_acmd("game_throwlw", game_throwlw, Default)
+        .game_acmd("game_finalend", game_finalend, Default)
+        .game_acmd("game_finalairend", game_finalairend, Default)
         .install();
 }
